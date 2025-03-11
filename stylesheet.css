@@ -60,7 +60,7 @@ body {
   justify-content: center;
   align-items: center;
   position: relative;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -83,19 +83,18 @@ h1 {
 }
 
 .game-date {
-  font-size: 0.9rem;
+  font-size: 1rem;
   color: var(--secondary-color);
   text-align: center;
-  margin: 6px 0 10px;
+  margin: 8px 0 16px;
   font-weight: 500;
   letter-spacing: 1px;
 }
 
 .game-body {
   flex: 1;
-  display: grid;
-  grid-template-rows: minmax(120px, 40%) auto auto;
-  gap: 8px;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   justify-content: space-between;
   padding: 0 8px;
@@ -107,13 +106,11 @@ h1 {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 16px;
   flex: 1;
-  padding: 4px 0;
+  padding: 10px 0;
   width: 100%;
   overflow-y: auto;
-  min-height: 120px;
-  max-height: 35vh;
 }
 
 .guess-row {
@@ -122,29 +119,27 @@ h1 {
   align-items: center;
   width: 100%;
   max-width: 320px;
-  margin-bottom: 4px;
-  padding: 4px;
+  margin-bottom: 6px;
+  padding: 6px;
   border-radius: 6px;
   background-color: var(--highlight-color);
-  height: 40px;
 }
 
 .guess-emojis {
   display: flex;
-  gap: 4px;
+  gap: 6px;
 }
 
 .guess-emoji {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 20px;
   background-color: white;
   border-radius: 4px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  flex-shrink: 0;
 }
 
 .feedback-pegs {
@@ -175,33 +170,31 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 16px;
   width: 100%;
-  max-height: 20vh;
 }
 
 .current-guess {
   display: flex;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   margin-bottom: 10px;
   width: 100%;
   max-width: 320px;
 }
 
 .guess-slot {
-  width: 32px;
-  height: 32px;
+  width: 42px;
+  height: 42px;
   border-radius: 4px;
   background-color: var(--slot-bg-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 22px;
   cursor: pointer;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
-  flex-shrink: 0;
 }
 
 .guess-slot.filled {
@@ -240,39 +233,36 @@ h1 {
   cursor: not-allowed;
 }
 
-/* Emoji Keyboard Styles */
+/* Emoji Keyboard Styles - ENHANCED */
 .emoji-keyboard {
   display: flex;
   justify-content: center;
-  padding: 4px 0;
+  padding: 10px 0;
   width: 100%;
-  max-height: 30vh;
 }
 
 .emoji-keyboard-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  gap: 4px;
+  grid-template-rows: repeat(2, 1fr);
+  gap: 6px;
   width: 100%;
-  max-width: 300px;
-  max-height: 100%;
+  max-width: 320px;
 }
 
 .emoji-key {
-  width: 32px;
-  height: 32px;
+  width: 45px;
+  height: 45px;
   border: none;
-  border-radius: 4px;
+  border-radius: 6px;
   background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 22px;
   cursor: pointer;
   transition: transform 0.1s, background-color 0.2s;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* Emoji key states for Wordle-style feedback */
@@ -309,34 +299,45 @@ h1 {
 
 /* Responsive adjustments for mobile */
 @media (max-width: 480px) {
-  .game-body {
-    grid-template-rows: minmax(100px, 35%) auto auto;
-    gap: 6px;
-  }
-  
-  .board-container {
-    max-height: 30vh;
-    min-height: 100px;
-  }
-  
-  .guess-row {
-    height: 36px;
-  }
-  
   .emoji-keyboard-grid {
-    gap: 3px;
+    gap: 4px;
   }
   
   .emoji-key {
-    width: 28px;
-    height: 28px;
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+  }
+  
+  .guess-slot {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
+  
+  .guess-emoji {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+  
+  .game-container {
+    padding: 10px;
+  }
+}
+
+/* Even smaller screens */
+@media (max-width: 360px) {
+  .emoji-key {
+    width: 32px;
+    height: 32px;
     font-size: 16px;
   }
   
   .guess-slot {
-    width: 28px;
-    height: 28px;
-    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
   }
   
   .guess-emoji {
@@ -349,141 +350,8 @@ h1 {
     padding: 8px;
   }
   
-  .current-guess {
-    margin-bottom: 6px;
-    gap: 4px;
-  }
-  
-  .guess-emojis {
-    gap: 4px;
-  }
-  
-  .submit-btn {
-    padding: 6px 16px;
-    font-size: 0.9rem;
-    margin-bottom: 6px;
-  }
-}
-
-/* Even smaller screens */
-@media (max-width: 360px) {
-  .game-body {
-    grid-template-rows: minmax(80px, 30%) auto auto;
-    gap: 4px;
-  }
-  
-  .board-container {
-    max-height: 25vh;
-    min-height: 80px;
-  }
-  
-  .guess-row {
-    height: 32px;
-  }
-  
-  .emoji-keyboard-grid {
-    gap: 2px;
-  }
-  
-  .emoji-key {
-    width: 24px;
-    height: 24px;
-    font-size: 14px;
-  }
-  
-  .guess-slot {
-    width: 24px;
-    height: 24px;
-    font-size: 14px;
-  }
-  
-  .guess-emoji {
-    width: 24px;
-    height: 24px;
-    font-size: 14px;
-  }
-  
-  .game-container {
-    padding: 6px;
-  }
-  
-  .current-guess {
-    gap: 3px;
-  }
-  
-  .guess-emojis {
-    gap: 3px;
-  }
-  
   h1 {
-    font-size: 1.2rem;
-  }
-  
-  .game-date {
-    font-size: 0.8rem;
-    margin: 4px 0 8px;
-  }
-  
-  .submit-btn {
-    padding: 5px 14px;
-    font-size: 0.8rem;
-  }
-}
-
-/* Very small screens and landscape mode */
-@media (max-height: 600px), (max-width: 340px) {
-  .game-body {
-    grid-template-rows: minmax(60px, 25%) auto auto;
-    gap: 3px;
-  }
-  
-  .board-container {
-    max-height: 20vh;
-    min-height: 60px;
-  }
-  
-  .guess-row {
-    height: 28px;
-  }
-  
-  .emoji-key {
-    width: 22px;
-    height: 22px;
-    font-size: 12px;
-  }
-  
-  .guess-slot {
-    width: 22px;
-    height: 22px;
-    font-size: 12px;
-  }
-  
-  .guess-emoji {
-    width: 22px;
-    height: 22px;
-    font-size: 12px;
-  }
-  
-  .board-container {
-    margin-bottom: 6px;
-    padding: 3px 0;
-  }
-  
-  .current-guess-container {
-    margin-bottom: 6px;
-  }
-  
-  .current-guess {
-    gap: 2px;
-  }
-  
-  .guess-emojis {
-    gap: 2px;
-  }
-  
-  .footer {
-    font-size: 0.7rem;
-    padding: 4px 0;
+    font-size: 1.4rem;
   }
 }
 
@@ -872,82 +740,32 @@ h1 {
     letter-spacing: 2px;
     line-height: 1.2;
     padding: 2px 0;
+    font-size: 1.1rem;
 }
 
 .share-title {
     font-weight: bold;
-    margin-bottom: 2px;
-}
-
-.share-score {
-    font-size: 1.1em;
     margin-bottom: 5px;
-}
-
-.share-spacer {
-    height: 8px;
-}
-
-.share-message {
-    margin-top: 5px;
-    font-weight: bold;
-}
-
-.share-button {
-    margin-top: 15px;
-    padding: 12px 20px;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.1s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.share-button:hover {
-    background-color: var(--primary-hover-color);
-    transform: translateY(-1px);
-}
-
-.share-button:active {
-    transform: translateY(1px);
+    font-size: 0.9rem;
 }
 
 /* Responsive adjustments for share preview */
-@media (max-width: 350px) {
+@media (max-width: 480px) {
     .share-preview {
         padding: 10px;
     }
     
     .share-line {
-        font-size: 0.9em;
+        font-size: 0.9rem;
+    }
+    
+    .share-title {
+        font-size: 0.8rem;
     }
 }
 
-/* Mobile optimizations for game layout */
-@media (max-height: 700px) {
-  .game-header {
-    padding-bottom: 6px;
-  }
-  
-  .game-date {
-    margin: 4px 0 8px;
-  }
-  
-  .board-container {
-    padding: 4px 0;
-    margin-bottom: 8px;
-  }
-  
-  .current-guess-container {
-    margin-bottom: 8px;
-  }
-  
-  .footer {
-    padding: 6px 0;
-  }
+@media (max-width: 360px) {
+    .share-line {
+        font-size: 0.8rem;
+    }
 }

@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Secret code:', secretCode);
     }
     
-    // Create emoji keyboard with today's emojis - 3 rows of 5 for 15 emojis
+    // Create emoji keyboard with today's emojis - 2 rows of 5
     function createEmojiKeyboard() {
         emojiKeyboard.innerHTML = '';
         
@@ -529,7 +529,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
             
-            // Add the row without numbers
+            // Add the row without guess number
             shareText += `${feedbackRow}\n`;
         }
         
@@ -602,8 +602,8 @@ document.addEventListener('DOMContentLoaded', function() {
         titleLine.textContent = shareLines[0]; // "Mojimind YYYY-MM-DD"
         sharePreview.appendChild(titleLine);
         
-        // Add guess lines
-        for (let i = 1; i < shareLines.length - 1; i++) {
+        // Add guess lines (all lines except the title)
+        for (let i = 1; i < shareLines.length; i++) {
             if (shareLines[i].trim() !== '') {
                 const shareLine = document.createElement('div');
                 shareLine.className = 'share-line';
