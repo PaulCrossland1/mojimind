@@ -93,8 +93,9 @@ h1 {
 
 .game-body {
   flex: 1;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-rows: minmax(120px, 40%) auto auto;
+  gap: 8px;
   overflow: hidden;
   justify-content: space-between;
   padding: 0 8px;
@@ -108,10 +109,11 @@ h1 {
   align-items: center;
   margin-bottom: 10px;
   flex: 1;
-  padding: 6px 0;
+  padding: 4px 0;
   width: 100%;
   overflow-y: auto;
   min-height: 120px;
+  max-height: 35vh;
 }
 
 .guess-row {
@@ -124,11 +126,12 @@ h1 {
   padding: 4px;
   border-radius: 6px;
   background-color: var(--highlight-color);
+  height: 40px;
 }
 
 .guess-emojis {
   display: flex;
-  gap: 6px;
+  gap: 4px;
 }
 
 .guess-emoji {
@@ -141,6 +144,7 @@ h1 {
   background-color: white;
   border-radius: 4px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
 }
 
 .feedback-pegs {
@@ -171,14 +175,15 @@ h1 {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   width: 100%;
+  max-height: 20vh;
 }
 
 .current-guess {
   display: flex;
   justify-content: center;
-  gap: 6px;
+  gap: 4px;
   margin-bottom: 10px;
   width: 100%;
   max-width: 320px;
@@ -196,6 +201,7 @@ h1 {
   cursor: pointer;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
+  flex-shrink: 0;
 }
 
 .guess-slot.filled {
@@ -234,12 +240,13 @@ h1 {
   cursor: not-allowed;
 }
 
-/* Emoji Keyboard Styles - ENHANCED */
+/* Emoji Keyboard Styles */
 .emoji-keyboard {
   display: flex;
   justify-content: center;
-  padding: 6px 0;
+  padding: 4px 0;
   width: 100%;
+  max-height: 30vh;
 }
 
 .emoji-keyboard-grid {
@@ -249,6 +256,7 @@ h1 {
   gap: 4px;
   width: 100%;
   max-width: 300px;
+  max-height: 100%;
 }
 
 .emoji-key {
@@ -264,6 +272,7 @@ h1 {
   cursor: pointer;
   transition: transform 0.1s, background-color 0.2s;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
 }
 
 /* Emoji key states for Wordle-style feedback */
@@ -300,6 +309,20 @@ h1 {
 
 /* Responsive adjustments for mobile */
 @media (max-width: 480px) {
+  .game-body {
+    grid-template-rows: minmax(100px, 35%) auto auto;
+    gap: 6px;
+  }
+  
+  .board-container {
+    max-height: 30vh;
+    min-height: 100px;
+  }
+  
+  .guess-row {
+    height: 36px;
+  }
+  
   .emoji-keyboard-grid {
     gap: 3px;
   }
@@ -344,6 +367,20 @@ h1 {
 
 /* Even smaller screens */
 @media (max-width: 360px) {
+  .game-body {
+    grid-template-rows: minmax(80px, 30%) auto auto;
+    gap: 4px;
+  }
+  
+  .board-container {
+    max-height: 25vh;
+    min-height: 80px;
+  }
+  
+  .guess-row {
+    height: 32px;
+  }
+  
   .emoji-keyboard-grid {
     gap: 2px;
   }
@@ -395,6 +432,20 @@ h1 {
 
 /* Very small screens and landscape mode */
 @media (max-height: 600px), (max-width: 340px) {
+  .game-body {
+    grid-template-rows: minmax(60px, 25%) auto auto;
+    gap: 3px;
+  }
+  
+  .board-container {
+    max-height: 20vh;
+    min-height: 60px;
+  }
+  
+  .guess-row {
+    height: 28px;
+  }
+  
   .emoji-key {
     width: 22px;
     height: 22px;
