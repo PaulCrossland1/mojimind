@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Secret code:', secretCode);
     }
     
-    // Create emoji keyboard with today's emojis - 2 rows of 5
+    // Create emoji keyboard with today's emojis - 3 rows of 5 for 15 emojis
     function createEmojiKeyboard() {
         emojiKeyboard.innerHTML = '';
         
