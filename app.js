@@ -511,76 +511,27 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function generateShareText(isWon) {
         const formattedDate = getFormattedDate();
-        let shareText = `Mojimind: ${formattedDate}\n`;
+        let shareText = `Mojimind ${formattedDate}\n`;
         
-        // Add emoji grid representation of guesses
-        if (isWon) {
-            // Add number of guesses out of max with star emoji for visual appeal
-            shareText += `${guessHistory.length}/${MAX_GUESSES} ⭐\n\n`;
+        // Create a visual representation of the game with Wordle-style squares
+        for (let i = 0; i < guessHistory.length; i++) {
+            const guess = guessHistory[i];
             
-            // Create a visual representation of the game with Wordle-style squares
-            for (let i = 0; i < guessHistory.length; i++) {
-                const guess = guessHistory[i];
-                
-                // Add a row of squares for each guess
-                // 🟩 = green (correct position)
-                // 🟨 = yellow (correct emoji, wrong position)
-                // ⬛ = grey (not in code)
-                
-                let feedbackRow = '';
-                
-                for (let j = 0; j < CODE_LENGTH; j++) {
-                    if (guess.feedback[j] === 'green') {
-                        feedbackRow += '🟩';
-                    } else if (guess.feedback[j] === 'yellow') {
-                        feedbackRow += '🟨';
-                    } else {
-                        feedbackRow += '⬛';
-                    }
+            let feedbackRow = '';
+            
+            for (let j = 0; j < CODE_LENGTH; j++) {
+                if (guess.feedback[j] === 'green') {
+                    feedbackRow += '🟩';
+                } else if (guess.feedback[j] === 'yellow') {
+                    feedbackRow += '🟨';
+                } else {
+                    feedbackRow += '⬛';
                 }
-                
-                // Add guess number for context
-                shareText += `${i+1}. ${feedbackRow}\n`;
             }
             
-            // Add a celebratory message based on performance
-            if (guessHistory.length <= 5) {
-                shareText += "\nBrilliant! 🎯";
-            } else if (guessHistory.length <= 10) {
-                shareText += "\nWell done! 👏";
-            } else if (guessHistory.length <= 15) {
-                shareText += "\nGood job! 👍";
-            } else {
-                shareText += "\nPhew! Made it! 😅";
-            }
-        } else {
-            shareText += `X/${MAX_GUESSES} 💔\n\n`;
-            
-            // For lost games, show all attempts with Wordle-style squares
-            for (let i = 0; i < guessHistory.length; i++) {
-                const guess = guessHistory[i];
-                
-                let feedbackRow = '';
-                
-                for (let j = 0; j < CODE_LENGTH; j++) {
-                    if (guess.feedback[j] === 'green') {
-                        feedbackRow += '🟩';
-                    } else if (guess.feedback[j] === 'yellow') {
-                        feedbackRow += '🟨';
-                    } else {
-                        feedbackRow += '⬛';
-                    }
-                }
-                
-                // Add guess number for context
-                shareText += `${i+1}. ${feedbackRow}\n`;
-            }
-            
-            shareText += "\nBetter luck tomorrow! 🍀";
+            // Add the row without numbers
+            shareText += `${feedbackRow}\n`;
         }
-        
-        // Add URL
-        shareText += '\n\nhttps://mojimind.com';
         
         return shareText;
     }
@@ -648,36 +599,17 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add title line
         const titleLine = document.createElement('div');
         titleLine.className = 'share-line share-title';
-        titleLine.textContent = shareLines[0]; // "Mojimind: YYYY-MM-DD"
+        titleLine.textContent = shareLines[0]; // "Mojimind YYYY-MM-DD"
         sharePreview.appendChild(titleLine);
         
-        // Add score line
-        const scoreLine = document.createElement('div');
-        scoreLine.className = 'share-line share-score';
-        scoreLine.textContent = shareLines[1]; // "X/20 ⭐" or "X/20 💔"
-        sharePreview.appendChild(scoreLine);
-        
-        // Add spacer
-        const spacer = document.createElement('div');
-        spacer.className = 'share-spacer';
-        sharePreview.appendChild(spacer);
-        
-        // Add guess lines (skip header, score, empty line, and footer)
-        for (let i = 3; i < shareLines.length - 3; i++) {
+        // Add guess lines
+        for (let i = 1; i < shareLines.length - 1; i++) {
             if (shareLines[i].trim() !== '') {
                 const shareLine = document.createElement('div');
                 shareLine.className = 'share-line';
                 shareLine.textContent = shareLines[i];
                 sharePreview.appendChild(shareLine);
             }
-        }
-        
-        // Add message line if present (celebratory or better luck message)
-        if (shareLines[shareLines.length - 3].trim() !== '') {
-            const messageLine = document.createElement('div');
-            messageLine.className = 'share-line share-message';
-            messageLine.textContent = shareLines[shareLines.length - 3];
-            sharePreview.appendChild(messageLine);
         }
         
         // Create share button
@@ -688,8 +620,10 @@ document.addEventListener('DOMContentLoaded', function() {
             copyToClipboard(shareText);
             const originalText = this.textContent;
             this.textContent = 'COPIED!';
+            this.style.backgroundColor = 'var(--success-color)';
             setTimeout(() => {
                 this.textContent = originalText;
+                this.style.backgroundColor = '';
             }, 2000);
         };
         
