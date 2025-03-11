@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <!-- Google tag (gtag.js) -->
+    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-LJRJXWNR5B"></script>
     <script>
     window.dataLayer = window.dataLayer || [];
@@ -10,10 +10,16 @@
 
     gtag('config', 'G-LJRJXWNR5B');
     </script>
+    
     <!-- Basic Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="description" content="Mojimind - find the emojis">
+    <meta name="description" content="Play Mojimind - A daily emoji puzzle game inspired by Wordle and Mastermind. Guess the 5-emoji code in 6 tries with color feedback. New puzzle every day!">
+    <meta name="keywords" content="emoji game, daily puzzle, Wordle, Mastermind, emoji puzzle, brain game, daily challenge, word game alternative">
+    <meta name="author" content="Paul Crossland">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    <meta name="canonical" content="https://mojimind.com/">
     
     <!-- iOS PWA improvements -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,16 +28,19 @@
     <!-- Open Graph / Social Media -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://mojimind.com/">
-    <meta property="og:title" content="Mojimind - Find the emojis">
-    <meta property="og:description" content="Daily Emoji Mastermind Challenge">
+    <meta property="og:title" content="Mojimind - Daily Emoji Puzzle Game">
+    <meta property="og:description" content="A daily emoji puzzle game inspired by Wordle. Guess the 5-emoji code in 6 tries. New puzzle every day!">
     <meta property="og:image" content="https://mojimind.com/og-image.png">
+    <meta property="og:site_name" content="Mojimind">
+    <meta property="og:locale" content="en_US">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://mojimind.com/">
-    <meta name="twitter:title" content="Mojimind - Find the emojis">
-    <meta name="twitter:description" content="Daily Emoji Mastermind Challenge.">
+    <meta name="twitter:title" content="Mojimind - Daily Emoji Puzzle Game">
+    <meta name="twitter:description" content="A daily emoji puzzle game inspired by Wordle. Guess the 5-emoji code in 6 tries. New puzzle every day!">
     <meta name="twitter:image" content="https://mojimind.com/og-image.png">
+    <meta name="twitter:creator" content="@paulcrossland">
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="favicon.png">
@@ -41,7 +50,7 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4F46E5">
     
-    <title>Mojimind - Daily Emoji Mastermind Challenge</title>
+    <title>Mojimind - Daily Emoji Puzzle Game | Like Wordle but with Emojis</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -50,41 +59,65 @@
     
     <!-- Styles -->
     <link rel="stylesheet" href="stylesheet.css">
+    
+    <!-- Structured Data for Rich Results -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Mojimind",
+      "url": "https://mojimind.com",
+      "description": "A daily emoji puzzle game inspired by Wordle. Guess the 5-emoji code in 6 tries with color feedback.",
+      "applicationCategory": "GameApplication",
+      "genre": "Puzzle",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "Paul Crossland",
+        "url": "http://paulcrossland.com"
+      }
+    }
+    </script>
 </head>
 <body class="ios-height-fix">
-    <div class="game-container">
+    <header class="game-container">
         <div class="game-header">
             <h1>MOJIMIND</h1>
-            <div class="guesses-counter" id="guesses-counter">0/20</div>
+            <div class="guesses-counter" id="guesses-counter">0/6</div>
         </div>
         
         <p class="game-date" id="game-date"></p>
         
-        <div class="game-body">
-            <div class="board-container" id="board-container">
+        <main class="game-body">
+            <section class="board-container" id="board-container" aria-label="Game Board">
                 <!-- Game board will be generated here -->
-            </div>
+            </section>
             
-            <div class="current-guess-container" id="current-guess-container">
+            <section class="current-guess-container" id="current-guess-container" aria-label="Current Guess">
                 <div class="current-guess" id="current-guess">
-                    <div class="guess-slot" data-index="0"></div>
-                    <div class="guess-slot" data-index="1"></div>
-                    <div class="guess-slot" data-index="2"></div>
-                    <div class="guess-slot" data-index="3"></div>
-                    <div class="guess-slot" data-index="4"></div>
+                    <div class="guess-slot" data-index="0" aria-label="Emoji slot 1"></div>
+                    <div class="guess-slot" data-index="1" aria-label="Emoji slot 2"></div>
+                    <div class="guess-slot" data-index="2" aria-label="Emoji slot 3"></div>
+                    <div class="guess-slot" data-index="3" aria-label="Emoji slot 4"></div>
+                    <div class="guess-slot" data-index="4" aria-label="Emoji slot 5"></div>
                 </div>
-                <button class="submit-btn" id="submit-btn" disabled>SUBMIT</button>
-            </div>
+                <button class="submit-btn" id="submit-btn" disabled aria-label="Submit guess">SUBMIT</button>
+            </section>
             
-            <div class="emoji-keyboard" id="emoji-keyboard">
+            <section class="emoji-keyboard" id="emoji-keyboard" aria-label="Emoji Keyboard">
                 <!-- Emoji buttons will be generated here -->
-            </div>
-        </div>
+            </section>
+        </main>
         
-        <div class="footer">
+        <footer class="footer">
             <p>built with 💜 by <a href="http://paulcrossland.com">paul crossland</a> | <a href="#" id="how-to-play">how to play</a></p>
-        </div>
-    </div>
+        </footer>
+    </header>
 
     <!-- Scripts - Correct reference to app.js -->
     <script src="app.js"></script>
