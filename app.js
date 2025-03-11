@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Game constants
-    const MAX_GUESSES = 20;
-    const CODE_LENGTH = 4;
-    const EMOJIS_TO_SELECT = 5;
+    const MAX_GUESSES = 6;
+    const CODE_LENGTH = 5;
+    const EMOJIS_TO_SELECT = 15;
     const VISIBLE_GUESSES = 5;
     
     // A pool of 50 emojis as requested
@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function() {
         showRulesModal();
     }
     
-    // Select today's 5 emojis from the pool
+    // Select today's 10 emojis from the pool
     function selectTodaysEmojis(random) {
         // Create a copy of the emoji pool to shuffle
         const shuffledPool = [...EMOJI_POOL];
@@ -109,15 +109,15 @@ document.addEventListener('DOMContentLoaded', function() {
             [shuffledPool[i], shuffledPool[j]] = [shuffledPool[j], shuffledPool[i]];
         }
         
-        // Take the first 5 emojis
+        // Take the first 10 emojis
         todaysEmojis = shuffledPool.slice(0, EMOJIS_TO_SELECT);
     }
     
-    // Generate the secret 4-emoji code from today's 5 emojis
+    // Generate the secret 5-emoji code from today's emojis
     function generateSecretCode(random) {
         secretCode = [];
         
-        // Generate 4 positions, allowing duplicates
+        // Generate 5 positions, allowing duplicates
         for (let i = 0; i < CODE_LENGTH; i++) {
             const index = Math.floor(random() * EMOJIS_TO_SELECT);
             secretCode.push(todaysEmojis[index]);
@@ -128,17 +128,25 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Secret code:', secretCode);
     }
     
-    // Create emoji keyboard with today's emojis
+    // Create emoji keyboard with today's emojis - 2 rows of 5
     function createEmojiKeyboard() {
         emojiKeyboard.innerHTML = '';
         
-        todaysEmojis.forEach(emoji => {
+        // Create a container for the keyboard grid
+        const keyboardGrid = document.createElement('div');
+        keyboardGrid.classList.add('emoji-keyboard-grid');
+        
+        // Add each emoji to the keyboard
+        todaysEmojis.forEach((emoji, index) => {
             const emojiKey = document.createElement('button');
             emojiKey.classList.add('emoji-key');
             emojiKey.textContent = emoji;
+            emojiKey.dataset.emoji = emoji;
             emojiKey.addEventListener('click', () => handleEmojiSelection(emoji));
-            emojiKeyboard.appendChild(emojiKey);
+            keyboardGrid.appendChild(emojiKey);
         });
+        
+        emojiKeyboard.appendChild(keyboardGrid);
     }
     
     // Handle emoji selection
@@ -195,8 +203,8 @@ document.addEventListener('DOMContentLoaded', function() {
             feedback: feedback
         });
         
-        // Check if game is won
-        const isWon = feedback.black === CODE_LENGTH;
+        // Check if game is won (all feedback is green)
+        const isWon = feedback.every(fb => fb === 'green');
         
         // Check if game is over (won or max guesses reached)
         if (isWon || guessHistory.length >= MAX_GUESSES) {
@@ -214,39 +222,61 @@ document.addEventListener('DOMContentLoaded', function() {
         updateGuessesCounter();
     }
     
-    // Generate feedback for a guess
+    // Generate feedback for a guess - Wordle style
     function getFeedback(guess, code) {
-        let black = 0; // Correct emoji in correct position
-        let white = 0; // Correct emoji in wrong position
-        
         // Make copies to work with
         const guessCopy = [...guess];
         const codeCopy = [...code];
+        const result = Array(CODE_LENGTH).fill('grey');
         
-        // First pass: Check for correct emoji in correct position
+        // First pass: Check for correct emoji in correct position (green)
         for (let i = 0; i < CODE_LENGTH; i++) {
             if (guessCopy[i] === codeCopy[i]) {
-                black++;
+                result[i] = 'green';
                 // Mark as matched
-                guessCopy[i] = null;
                 codeCopy[i] = null;
+                guessCopy[i] = null;
             }
         }
         
-        // Second pass: Check for correct emoji in wrong position
+        // Second pass: Check for correct emoji in wrong position (yellow)
         for (let i = 0; i < CODE_LENGTH; i++) {
             if (guessCopy[i] !== null) {
                 const codeIndex = codeCopy.findIndex(emoji => emoji === guessCopy[i]);
                 if (codeIndex !== -1) {
-                    white++;
+                    result[i] = 'yellow';
                     // Mark as matched
-                    guessCopy[i] = null;
                     codeCopy[codeIndex] = null;
                 }
             }
         }
         
-        return { black, white };
+        // Update the color of the emojis in the keyboard
+        updateKeyboardColors(guess, result);
+        
+        return result;
+    }
+    
+    // Update keyboard colors based on feedback
+    function updateKeyboardColors(guess, feedback) {
+        guess.forEach((emoji, index) => {
+            const keyboardKey = document.querySelector(`.emoji-key[data-emoji="${emoji}"]`);
+            if (keyboardKey) {
+                // Only update if the current state isn't better
+                // Priority: green > yellow > grey
+                const currentState = keyboardKey.dataset.state || 'unused';
+                const newState = feedback[index];
+                
+                if (newState === 'green' || 
+                    (newState === 'yellow' && currentState !== 'green') ||
+                    (newState === 'grey' && currentState !== 'green' && currentState !== 'yellow')) {
+                    keyboardKey.dataset.state = newState;
+                    // Add appropriate class for styling
+                    keyboardKey.classList.remove('emoji-key-green', 'emoji-key-yellow', 'emoji-key-grey');
+                    keyboardKey.classList.add(`emoji-key-${newState}`);
+                }
+            }
+        });
     }
     
     // Update the board with guess history
@@ -267,50 +297,33 @@ document.addEventListener('DOMContentLoaded', function() {
         boardContainer.scrollTop = boardContainer.scrollHeight;
     }
     
-    // Create a row for a guess
+    // Create a row for a guess - Wordle style feedback
     function createGuessRow(guess) {
         const row = document.createElement('div');
         row.classList.add('guess-row');
         
-        // Create emojis section
+        // Create emojis section with feedback background colors
         const emojisContainer = document.createElement('div');
         emojisContainer.classList.add('guess-emojis');
         
-        guess.emojis.forEach(emoji => {
+        guess.emojis.forEach((emoji, index) => {
             const emojiElement = document.createElement('div');
             emojiElement.classList.add('guess-emoji');
+            
+            // Add color class based on feedback
+            if (guess.feedback[index] === 'green') {
+                emojiElement.classList.add('guess-emoji-green');
+            } else if (guess.feedback[index] === 'yellow') {
+                emojiElement.classList.add('guess-emoji-yellow');
+            } else {
+                emojiElement.classList.add('guess-emoji-grey');
+            }
+            
             emojiElement.textContent = emoji;
             emojisContainer.appendChild(emojiElement);
         });
         
-        // Create feedback section
-        const feedbackContainer = document.createElement('div');
-        feedbackContainer.classList.add('feedback-pegs');
-        
-        // Add black pegs first
-        for (let i = 0; i < guess.feedback.black; i++) {
-            const peg = document.createElement('div');
-            peg.classList.add('feedback-peg', 'feedback-black');
-            feedbackContainer.appendChild(peg);
-        }
-        
-        // Then add white pegs
-        for (let i = 0; i < guess.feedback.white; i++) {
-            const peg = document.createElement('div');
-            peg.classList.add('feedback-peg', 'feedback-white');
-            feedbackContainer.appendChild(peg);
-        }
-        
-        // Add empty pegs for the remaining slots
-        const emptyPegs = CODE_LENGTH - guess.feedback.black - guess.feedback.white;
-        for (let i = 0; i < emptyPegs; i++) {
-            const peg = document.createElement('div');
-            peg.classList.add('feedback-peg');
-            feedbackContainer.appendChild(peg);
-        }
-        
         row.appendChild(emojisContainer);
-        row.appendChild(feedbackContainer);
         
         return row;
     }
@@ -334,20 +347,41 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Copy text to clipboard
     function copyToClipboard(text) {
-        // Create temporary element
-        const tempElement = document.createElement('textarea');
-        tempElement.value = text;
-        tempElement.setAttribute('readonly', '');
-        tempElement.style.position = 'absolute';
-        tempElement.style.left = '-9999px';
-        document.body.appendChild(tempElement);
+        // Try using the Clipboard API first
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    console.log('Text copied to clipboard');
+                })
+                .catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    fallbackCopyToClipboard(text);
+                });
+        } else {
+            fallbackCopyToClipboard(text);
+        }
+    }
+    
+    function fallbackCopyToClipboard(text) {
+        // Fallback for browsers that don't support Clipboard API
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-999999px';
+        textArea.style.top = '-999999px';
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
         
-        // Select and copy
-        tempElement.select();
-        document.execCommand('copy');
+        try {
+            const successful = document.execCommand('copy');
+            const msg = successful ? 'successful' : 'unsuccessful';
+            console.log('Fallback: Copying text was ' + msg);
+        } catch (err) {
+            console.error('Fallback: Unable to copy', err);
+        }
         
-        // Clean up
-        document.body.removeChild(tempElement);
+        document.body.removeChild(textArea);
     }
     
     // Enhanced mobile experience for iOS Safari
@@ -367,165 +401,188 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Modal functions
-// Function to show simplified visual rules modal
-function showRulesModal() {
-    // Create modal container
-    const modalOverlay = document.createElement('div');
-    modalOverlay.className = 'modal-overlay';
-    
-    const modalContainer = document.createElement('div');
-    modalContainer.className = 'modal-container';
-    
-    // Modal header
-    const modalHeader = document.createElement('div');
-    modalHeader.className = 'modal-header';
-    
-    const modalTitle = document.createElement('h2');
-    modalTitle.textContent = 'HOW TO PLAY MOJIMIND';
-    
-    const closeButton = document.createElement('button');
-    closeButton.className = 'modal-close';
-    closeButton.textContent = '×';
-    closeButton.onclick = closeModal;
-    
-    modalHeader.appendChild(modalTitle);
-    modalHeader.appendChild(closeButton);
-    
-    // Modal content
-    const modalContent = document.createElement('div');
-    modalContent.className = 'modal-content';
-    
-    modalContent.innerHTML = `
-        <p>Guess the daily 4-emoji code in 20 tries.</p>
-        <p>Each day has a new set of 5 emojis to choose from.</p>
-        <hr style="margin: 12px 0; border-top: 1px solid var(--border-color);">
+    function showRulesModal() {
+        // Create modal container
+        const modalOverlay = document.createElement('div');
+        modalOverlay.className = 'modal-overlay';
         
-        <p style="margin: 12px 0 8px;"><strong>Secret Code:</strong></p>
-        <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-            <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🍎</div>
-            <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🐱</div>
-            <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🚀</div>
-            <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🍓</div>
-        </div>
+        const modalContainer = document.createElement('div');
+        modalContainer.className = 'modal-container';
         
-        <!-- Example 1: One emoji correct but wrong position -->
-        <div style="display: flex; align-items: center; margin-bottom: 8px; background-color: var(--highlight-color); padding: 8px; border-radius: 6px;">
-            <div style="display: flex; gap: 8px; margin-right: 15px; flex-grow: 1;">
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🌈</div>
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🌈</div>
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🌈</div>
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🍎</div>
+        // Modal header
+        const modalHeader = document.createElement('div');
+        modalHeader.className = 'modal-header';
+        
+        const modalTitle = document.createElement('h2');
+        modalTitle.textContent = 'HOW TO PLAY';
+        
+        const closeButton = document.createElement('button');
+        closeButton.className = 'modal-close';
+        closeButton.textContent = '×';
+        closeButton.onclick = closeModal;
+        
+        modalHeader.appendChild(modalTitle);
+        modalHeader.appendChild(closeButton);
+        
+        // Modal content with updated rules
+        const modalContent = document.createElement('div');
+        modalContent.className = 'modal-content';
+        
+        modalContent.innerHTML = `
+            <div style="text-align: center; margin-bottom: 15px;">
+                <p style="font-weight: bold; font-size: 1.1rem;">Guess the 5-emoji code in 6 tries</p>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 4px;">
-                <div class="feedback-peg feedback-white" style="width: 12px; height: 12px;"></div>
-                <div class="feedback-peg" style="width: 12px; height: 12px;"></div>
-                <div class="feedback-peg" style="width: 12px; height: 12px;"></div>
-                <div class="feedback-peg" style="width: 12px; height: 12px;"></div>
-            </div>
-        </div>
-        <p style="margin: 0 0 16px; font-size: 0.8rem; color: var(--text-color); display: flex; align-items: center;">
-            <span style="display: inline-block; width: 12px; height: 12px; background-color: white; border: 1px solid var(--border-color); border-radius: 50%; margin-right: 6px;"></span> White peg: 🍎 is in the code but in the wrong position
-        </p>
-        
-        <!-- Example 2: One emoji correct and right position -->
-        <div style="display: flex; align-items: center; margin-bottom: 8px; background-color: var(--highlight-color); padding: 8px; border-radius: 6px;">
-            <div style="display: flex; gap: 8px; margin-right: 15px; flex-grow: 1;">
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🍎</div>
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🌈</div>
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🌈</div>
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🌈</div>
+            <div style="display: flex; justify-content: center; margin-bottom: 20px;">
+                <div style="display: flex; gap: 4px;">
+                    <div class="guess-emoji" style="width: 32px; height: 32px; font-size: 18px;">🍎</div>
+                    <div class="guess-emoji" style="width: 32px; height: 32px; font-size: 18px;">🐱</div>
+                    <div class="guess-emoji" style="width: 32px; height: 32px; font-size: 18px;">🍌</div>
+                    <div class="guess-emoji" style="width: 32px; height: 32px; font-size: 18px;">🚀</div>
+                    <div class="guess-emoji" style="width: 32px; height: 32px; font-size: 18px;">🐶</div>
+                </div>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 4px;">
-                <div class="feedback-peg feedback-black" style="width: 12px; height: 12px;"></div>
-                <div class="feedback-peg" style="width: 12px; height: 12px;"></div>
-                <div class="feedback-peg" style="width: 12px; height: 12px;"></div>
-                <div class="feedback-peg" style="width: 12px; height: 12px;"></div>
-            </div>
-        </div>
-        <p style="margin: 0 0 16px; font-size: 0.8rem; color: var(--text-color); display: flex; align-items: center;">
-            <span style="display: inline-block; width: 12px; height: 12px; background-color: black; border-radius: 50%; margin-right: 6px;"></span> Black peg: 🍎 is correct AND in the right position
-        </p>
-        
-        <!-- Example 3: Mixed feedback -->
-        <div style="display: flex; align-items: center; margin-bottom: 8px; background-color: var(--highlight-color); padding: 8px; border-radius: 6px;">
-            <div style="display: flex; gap: 8px; margin-right: 15px; flex-grow: 1;">
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🍎</div>
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🌈</div>
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🌈</div>
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🐱</div>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 4px;">
-                <div class="feedback-peg feedback-black" style="width: 12px; height: 12px;"></div>
-                <div class="feedback-peg feedback-white" style="width: 12px; height: 12px;"></div>
-                <div class="feedback-peg" style="width: 12px; height: 12px;"></div>
-                <div class="feedback-peg" style="width: 12px; height: 12px;"></div>
-            </div>
-        </div>
-        <p style="margin: 0 0 16px; font-size: 0.8rem; color: var(--text-color);">
-            <span style="display: flex; align-items: center; margin-bottom: 4px;">
-                <span style="display: inline-block; width: 12px; height: 12px; background-color: black; border-radius: 50%; margin-right: 6px;"></span> Black peg: 🍎 is correct AND in the right position
-            </span>
-            <span style="display: flex; align-items: center; margin-bottom: 4px;">
-                <span style="display: inline-block; width: 12px; height: 12px; background-color: white; border: 1px solid var(--border-color); border-radius: 50%; margin-right: 6px;"></span> White peg: 🐱 is in the code but in the wrong position
-            </span>
-        </p>
-        
-        <!-- Example 4: Correct guess -->
-        <div style="display: flex; align-items: center; margin-bottom: 8px; background-color: var(--highlight-color); padding: 8px; border-radius: 6px;">
-            <div style="display: flex; gap: 8px; margin-right: 15px; flex-grow: 1;">
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🍎</div>
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🐱</div>
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🚀</div>
-                <div class="guess-emoji" style="width: 38px; height: 38px; font-size: 20px; background-color: white;">🍓</div>
+            <div style="margin-bottom: 20px;">
+                <p style="margin-bottom: 10px; font-weight: bold;">After each guess:</p>
+                
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <div class="guess-emoji guess-emoji-green" style="width: 32px; height: 32px; font-size: 18px; margin-right: 10px;">🍎</div>
+                    <p>Green = correct spot</p>
+                </div>
+                
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                    <div class="guess-emoji guess-emoji-yellow" style="width: 32px; height: 32px; font-size: 18px; margin-right: 10px;">🍌</div>
+                    <p>Yellow = wrong spot</p>
+                </div>
+                
+                <div style="display: flex; align-items: center;">
+                    <div class="guess-emoji guess-emoji-grey" style="width: 32px; height: 32px; font-size: 18px; margin-right: 10px;">🌈</div>
+                    <p>Grey = not in code</p>
+                </div>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; grid-gap: 4px;">
-                <div class="feedback-peg feedback-black" style="width: 12px; height: 12px;"></div>
-                <div class="feedback-peg feedback-black" style="width: 12px; height: 12px;"></div>
-                <div class="feedback-peg feedback-black" style="width: 12px; height: 12px;"></div>
-                <div class="feedback-peg feedback-black" style="width: 12px; height: 12px;"></div>
+            <div style="margin-bottom: 15px;">
+                <p style="margin-bottom: 10px; font-weight: bold;">Example:</p>
+                
+                <div style="display: flex; gap: 4px; margin-bottom: 8px;">
+                    <div class="guess-emoji guess-emoji-green" style="width: 32px; height: 32px; font-size: 18px;">🍎</div>
+                    <div class="guess-emoji guess-emoji-grey" style="width: 32px; height: 32px; font-size: 18px;">🌈</div>
+                    <div class="guess-emoji guess-emoji-yellow" style="width: 32px; height: 32px; font-size: 18px;">🐱</div>
+                    <div class="guess-emoji guess-emoji-grey" style="width: 32px; height: 32px; font-size: 18px;">🌙</div>
+                    <div class="guess-emoji guess-emoji-grey" style="width: 32px; height: 32px; font-size: 18px;">🔮</div>
+                </div>
+                
+                <p style="font-size: 0.9rem;">
+                    • 🍎 is in the correct position<br>
+                    • 🐱 is in the code but wrong position<br>
+                    • Other emojis are not in the code
+                </p>
             </div>
-        </div>
-        <p style="margin: 0 0 16px; font-size: 0.8rem; color: var(--text-color); display: flex; align-items: center;">
-            <span style="display: inline-block; width: 12px; height: 12px; background-color: black; border-radius: 50%; margin-right: 6px;"></span><span style="margin-right: 2px;">4</span> Black pegs: You win!
-        </p>
+        `;
         
-        <div style="background-color: var(--bg-color); padding: 8px; border-radius: 6px; margin-top: 8px;">
-            <p style="margin: 0; font-size: 0.8rem;">
-                <strong>Important:</strong> The order of feedback pegs does not correspond to the positions in your guess.
-            </p>
-        </div>
-    `;
+        // Modal footer
+        const modalFooter = document.createElement('div');
+        modalFooter.className = 'modal-footer';
+        
+        const playButton = document.createElement('button');
+        playButton.className = 'modal-play-button';
+        playButton.textContent = 'PLAY';
+        playButton.onclick = closeModal;
+        
+        modalFooter.appendChild(playButton);
+        
+        // Assemble modal
+        modalContainer.appendChild(modalHeader);
+        modalContainer.appendChild(modalContent);
+        modalContainer.appendChild(modalFooter);
+        modalOverlay.appendChild(modalContainer);
+        
+        document.body.appendChild(modalOverlay);
+        
+        // Prevent scrolling when modal is open
+        document.body.style.overflow = 'hidden';
+    }
     
-    // Modal footer
-    const modalFooter = document.createElement('div');
-    modalFooter.className = 'modal-footer';
-    
-    const playButton = document.createElement('button');
-    playButton.className = 'modal-play-button';
-    playButton.textContent = 'LET\'S PLAY';
-    playButton.onclick = closeModal;
-    
-    modalFooter.appendChild(playButton);
-    
-    // Assemble modal
-    modalContainer.appendChild(modalHeader);
-    modalContainer.appendChild(modalContent);
-    modalContainer.appendChild(modalFooter);
-    modalOverlay.appendChild(modalContainer);
-    
-    document.body.appendChild(modalOverlay);
-    
-    // Prevent scrolling when modal is open
-    document.body.style.overflow = 'hidden';
-}    
-
-function showHowToPlayModal() {
+    function showHowToPlayModal() {
         // Similar to showRulesModal but can be called from "how to play" button
         showRulesModal();
+    }
+    
+    function generateShareText(isWon) {
+        const formattedDate = getFormattedDate();
+        let shareText = `Mojimind: ${formattedDate}\n`;
+        
+        // Add emoji grid representation of guesses
+        if (isWon) {
+            // Add number of guesses out of max with star emoji for visual appeal
+            shareText += `${guessHistory.length}/${MAX_GUESSES} ⭐\n\n`;
+            
+            // Create a visual representation of the game with Wordle-style squares
+            for (let i = 0; i < guessHistory.length; i++) {
+                const guess = guessHistory[i];
+                
+                // Add a row of squares for each guess
+                // 🟩 = green (correct position)
+                // 🟨 = yellow (correct emoji, wrong position)
+                // ⬛ = grey (not in code)
+                
+                let feedbackRow = '';
+                
+                for (let j = 0; j < CODE_LENGTH; j++) {
+                    if (guess.feedback[j] === 'green') {
+                        feedbackRow += '🟩';
+                    } else if (guess.feedback[j] === 'yellow') {
+                        feedbackRow += '🟨';
+                    } else {
+                        feedbackRow += '⬛';
+                    }
+                }
+                
+                // Add guess number for context
+                shareText += `${i+1}. ${feedbackRow}\n`;
+            }
+            
+            // Add a celebratory message based on performance
+            if (guessHistory.length <= 5) {
+                shareText += "\nBrilliant! 🎯";
+            } else if (guessHistory.length <= 10) {
+                shareText += "\nWell done! 👏";
+            } else if (guessHistory.length <= 15) {
+                shareText += "\nGood job! 👍";
+            } else {
+                shareText += "\nPhew! Made it! 😅";
+            }
+        } else {
+            shareText += `X/${MAX_GUESSES} 💔\n\n`;
+            
+            // For lost games, show all attempts with Wordle-style squares
+            for (let i = 0; i < guessHistory.length; i++) {
+                const guess = guessHistory[i];
+                
+                let feedbackRow = '';
+                
+                for (let j = 0; j < CODE_LENGTH; j++) {
+                    if (guess.feedback[j] === 'green') {
+                        feedbackRow += '🟩';
+                    } else if (guess.feedback[j] === 'yellow') {
+                        feedbackRow += '🟨';
+                    } else {
+                        feedbackRow += '⬛';
+                    }
+                }
+                
+                // Add guess number for context
+                shareText += `${i+1}. ${feedbackRow}\n`;
+            }
+            
+            shareText += "\nBetter luck tomorrow! 🍀";
+        }
+        
+        // Add URL
+        shareText += '\n\nhttps://mojimind.com';
+        
+        return shareText;
     }
     
     function showCompletionModal(isWon) {
@@ -559,19 +616,69 @@ function showHowToPlayModal() {
         // Create result message
         let resultMessage = '';
         if (isWon) {
-            resultMessage = `You solved today's mojimind in ${guessHistory.length} guesses!`;
+            // Add different messages based on performance
+            if (guessHistory.length <= 5) {
+                resultMessage = `Amazing! You solved today's mojimind in just ${guessHistory.length} guesses!`;
+            } else if (guessHistory.length <= 10) {
+                resultMessage = `Great job! You solved today's mojimind in ${guessHistory.length} guesses!`;
+            } else if (guessHistory.length <= 15) {
+                resultMessage = `Well done! You solved today's mojimind in ${guessHistory.length} guesses.`;
+            } else {
+                resultMessage = `You solved today's mojimind in ${guessHistory.length} guesses. Phew!`;
+            }
         } else {
             resultMessage = `Better luck next time! The code was:`;
         }
         
-        // Create text for share message
-        const formattedDate = getFormattedDate();
-        const shareText = `Mojimind: ${formattedDate}\n\n${isWon ?`I solved it in ${guessHistory.length}/20 guesses, can you do better?` : 'Try again tomorrow!'}\nhttps://mojimind.com`;
+        // Generate share text with visual representation
+        const shareText = generateShareText(isWon);
         
         // Configure message text
         const messageText = document.createElement('p');
         messageText.className = 'result-message';
         messageText.textContent = resultMessage;
+        
+        // Create share preview
+        const sharePreview = document.createElement('div');
+        sharePreview.className = 'share-preview';
+        
+        // Display the visual representation of guesses
+        const shareLines = shareText.split('\n');
+        
+        // Add title line
+        const titleLine = document.createElement('div');
+        titleLine.className = 'share-line share-title';
+        titleLine.textContent = shareLines[0]; // "Mojimind: YYYY-MM-DD"
+        sharePreview.appendChild(titleLine);
+        
+        // Add score line
+        const scoreLine = document.createElement('div');
+        scoreLine.className = 'share-line share-score';
+        scoreLine.textContent = shareLines[1]; // "X/20 ⭐" or "X/20 💔"
+        sharePreview.appendChild(scoreLine);
+        
+        // Add spacer
+        const spacer = document.createElement('div');
+        spacer.className = 'share-spacer';
+        sharePreview.appendChild(spacer);
+        
+        // Add guess lines (skip header, score, empty line, and footer)
+        for (let i = 3; i < shareLines.length - 3; i++) {
+            if (shareLines[i].trim() !== '') {
+                const shareLine = document.createElement('div');
+                shareLine.className = 'share-line';
+                shareLine.textContent = shareLines[i];
+                sharePreview.appendChild(shareLine);
+            }
+        }
+        
+        // Add message line if present (celebratory or better luck message)
+        if (shareLines[shareLines.length - 3].trim() !== '') {
+            const messageLine = document.createElement('div');
+            messageLine.className = 'share-line share-message';
+            messageLine.textContent = shareLines[shareLines.length - 3];
+            sharePreview.appendChild(messageLine);
+        }
         
         // Create share button
         const shareButton = document.createElement('button');
@@ -609,7 +716,8 @@ function showHowToPlayModal() {
             modalContent.appendChild(codeReveal);
         }
         
-        // Add share button
+        // Add share preview and button
+        modalContent.appendChild(sharePreview);
         modalContent.appendChild(shareButton);
         
         // Modal footer

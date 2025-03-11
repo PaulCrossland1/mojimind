@@ -6,10 +6,13 @@
   --success-color: #10B981;     /* Success feedback - green */
   --warning-color: #F59E0B;     /* Warning/alert feedback - amber */
   --border-color: #D1D5DB;      /* Border color - gray */
-  --highlight-color: #9aa4fd;   /* Subtle highlight - very light indigo */
+  --highlight-color: #F3F4F6;   /* Subtle highlight - very light gray instead of indigo */
   --feedback-black: #000000;    /* Black peg - correct emoji & position */
   --feedback-white: #FFFFFF;    /* White peg - correct emoji, wrong position */
   --slot-bg-color: #E5E7EB;     /* Empty slot background */
+  --feedback-green: #10B981;    /* Green feedback - correct position */
+  --feedback-yellow: #F59E0B;   /* Yellow feedback - correct emoji, wrong position */
+  --feedback-grey: #9CA3AF;     /* Grey feedback - not in code */
 }
 
 * {
@@ -40,12 +43,12 @@ body {
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
-  max-width: 500px;
+  max-width: 450px;
   height: 100%;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 16px;
+  padding: 12px;
   margin: 0 auto;
   /* Make game container scrollable when needed */
   overflow-y: auto;
@@ -112,28 +115,28 @@ h1 {
 
 .guess-row {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: 350px;
-  margin-bottom: 8px;
-  padding: 8px;
-  border-radius: 8px;
+  max-width: 320px;
+  margin-bottom: 6px;
+  padding: 6px;
+  border-radius: 6px;
   background-color: var(--highlight-color);
 }
 
 .guess-emojis {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .guess-emoji {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 20px;
   background-color: white;
   border-radius: 4px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
@@ -174,21 +177,21 @@ h1 {
 .current-guess {
   display: flex;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 6px;
+  margin-bottom: 10px;
   width: 100%;
-  max-width: 350px;
+  max-width: 320px;
 }
 
 .guess-slot {
-  width: 50px;
-  height: 50px;
+  width: 42px;
+  height: 42px;
   border-radius: 4px;
   background-color: var(--slot-bg-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 22px;
   cursor: pointer;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
@@ -234,40 +237,122 @@ h1 {
 .emoji-keyboard {
   display: flex;
   justify-content: center;
-  gap: 10px;
   padding: 10px 0;
   width: 100%;
 }
 
+.emoji-keyboard-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 6px;
+  width: 100%;
+  max-width: 320px;
+}
+
 .emoji-key {
-  /* 20% larger size */
-  width: 55px;
-  height: 55px;
+  width: 45px;
+  height: 45px;
   border: none;
   border-radius: 6px;
   background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 30px;
+  font-size: 22px;
   cursor: pointer;
-  /* Enhanced shadow */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-  transition: transform 0.1s, box-shadow 0.2s;
-  -webkit-tap-highlight-color: transparent;
-  /* Prevent text selection */
-  user-select: none;
+  transition: transform 0.1s, background-color 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-.emoji-key:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+/* Emoji key states for Wordle-style feedback */
+.emoji-key-green {
+  background-color: var(--feedback-green);
+  color: white;
 }
 
-/* Fix for the lock-in issue for mobile */
-.emoji-key:active {
-  transform: scale(0.95);
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+.emoji-key-yellow {
+  background-color: var(--feedback-yellow);
+  color: white;
+}
+
+.emoji-key-grey {
+  background-color: var(--feedback-grey);
+  color: white;
+}
+
+/* Guess emoji feedback colors */
+.guess-emoji-green {
+  background-color: var(--feedback-green);
+  color: white;
+}
+
+.guess-emoji-yellow {
+  background-color: var(--feedback-yellow);
+  color: white;
+}
+
+.guess-emoji-grey {
+  background-color: var(--feedback-grey);
+  color: white;
+}
+
+/* Responsive adjustments for mobile */
+@media (max-width: 480px) {
+  .emoji-keyboard-grid {
+    gap: 4px;
+  }
+  
+  .emoji-key {
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+  }
+  
+  .guess-slot {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
+  
+  .guess-emoji {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+  
+  .game-container {
+    padding: 10px;
+  }
+}
+
+/* Even smaller screens */
+@media (max-width: 360px) {
+  .emoji-key {
+    width: 32px;
+    height: 32px;
+    font-size: 16px;
+  }
+  
+  .guess-slot {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+  }
+  
+  .guess-emoji {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+  
+  .game-container {
+    padding: 8px;
+  }
+  
+  h1 {
+    font-size: 1.4rem;
+  }
 }
 
 .footer {
@@ -307,27 +392,28 @@ h1 {
 .modal-container {
   background-color: white;
   border-radius: 10px;
-  width: 94%;
-  max-width: 500px;
-  max-height: 70vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s ease-out;
+  width: 90%;
+  max-width: 350px;
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  position: relative;
+  animation: slideUp 0.3s ease-out forwards;
+  padding: 15px;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 16px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--border-color);
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
   color: var(--primary-color);
 }
 
@@ -337,46 +423,93 @@ h1 {
   font-size: 1.5rem;
   cursor: pointer;
   color: var(--text-color);
-  opacity: 0.7;
-  transition: opacity 0.2s;
-  margin-top: -5px;
+  padding: 0;
+  line-height: 1;
 }
 
 .modal-content {
-  padding: 12px 16px 8px;
-  overflow-y: auto;
-  flex-grow: 1;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
 }
 
 .modal-content p {
-  margin: 0 0 6px;
-  line-height: 1.25;
-  font-size: 0.9rem;
+  margin: 0 0 8px;
+  line-height: 1.4;
 }
 
 .modal-footer {
-  padding: 8px 16px 12px;
-  border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: center;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-color);
 }
 
 .modal-play-button {
   background-color: var(--primary-color);
   color: white;
   border: none;
-  padding: 10px 50px;
+  padding: 8px 20px;
   border-radius: 4px;
   font-family: 'Space Mono', monospace;
   font-weight: bold;
-  font-size: 1rem;
-  text-transform: uppercase;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: background-color 0.2s;
+  text-transform: uppercase;
 }
 
-.modal-play-button:hover {
-  background-color: var(--secondary-color);
+/* Mobile adjustments for modal */
+@media (max-width: 480px) {
+  .modal-container {
+    padding: 12px;
+    max-width: 320px;
+  }
+  
+  .modal-header {
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.2rem;
+  }
+  
+  .modal-content {
+    font-size: 0.9rem;
+  }
+  
+  .modal-footer {
+    padding-top: 8px;
+  }
+  
+  .modal-play-button {
+    padding: 6px 16px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Even smaller screens */
+@media (max-width: 360px) {
+  .modal-container {
+    padding: 10px;
+    max-width: 300px;
+  }
+  
+  .modal-header {
+    margin-bottom: 8px;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.1rem;
+  }
+  
+  .modal-content {
+    font-size: 0.85rem;
+  }
+  
+  .modal-footer {
+    padding-top: 6px;
+  }
 }
 
 /* Rule sections */
@@ -576,4 +709,80 @@ h1 {
   .game-container {
     max-height: -webkit-fill-available;
   }
+}
+
+/* Share preview styles */
+.share-preview {
+    font-family: monospace;
+    margin: 15px 0;
+    padding: 15px;
+    background-color: var(--highlight-color);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.share-line {
+    letter-spacing: 2px;
+    line-height: 1.2;
+    padding: 2px 0;
+}
+
+.share-title {
+    font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.share-score {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+.share-spacer {
+    height: 8px;
+}
+
+.share-message {
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.share-button {
+    margin-top: 15px;
+    padding: 12px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.share-button:hover {
+    background-color: var(--primary-hover-color);
+    transform: translateY(-1px);
+}
+
+.share-button:active {
+    transform: translateY(1px);
+}
+
+/* Responsive adjustments for share preview */
+@media (max-width: 350px) {
+    .share-preview {
+        padding: 10px;
+    }
+    
+    .share-line {
+        font-size: 0.9em;
+    }
 }
