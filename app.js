@@ -389,7 +389,20 @@ document.addEventListener('DOMContentLoaded', function() {
         // Fix for iOS Safari viewport height issues
         function setViewportHeight() {
             // Set a CSS variable with the viewport height
-            document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+            
+            // Apply additional padding for notched iPhones
+            const gameContainer = document.querySelector('.game-container');
+            if (gameContainer) {
+                // Check if running on iOS
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                if (isIOS) {
+                    // Add padding for the bottom bar on iOS
+                    gameContainer.style.paddingBottom = 'env(safe-area-inset-bottom)';
+                    gameContainer.style.paddingTop = 'env(safe-area-inset-top)';
+                }
+            }
         }
         
         // Set initial height and update on resize
@@ -398,6 +411,28 @@ document.addEventListener('DOMContentLoaded', function() {
         window.addEventListener('orientationchange', () => {
             setTimeout(setViewportHeight, 300);
         });
+        
+        // Prevent double-tap zoom on iOS
+        document.addEventListener('touchend', function(event) {
+            const now = Date.now();
+            const DOUBLE_TAP_THRESHOLD = 300;
+            if (now - lastTouchEnd <= DOUBLE_TAP_THRESHOLD) {
+                event.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+        
+        // Prevent pull-to-refresh on iOS
+        document.body.addEventListener('touchmove', function(e) {
+            if (e.target.closest('.board-container') || e.target.closest('.emoji-keyboard')) {
+                // Allow scrolling within game elements
+                return;
+            }
+            e.preventDefault();
+        }, { passive: false });
+        
+        // Variable to track last touch time for double-tap prevention
+        let lastTouchEnd = 0;
     }
     
     // Modal functions
