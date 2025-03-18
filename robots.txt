@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /service-worker.js
-
-Sitemap: https://mojimind.com/sitemap.xml 

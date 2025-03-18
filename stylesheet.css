@@ -6,13 +6,10 @@
   --success-color: #10B981;     /* Success feedback - green */
   --warning-color: #F59E0B;     /* Warning/alert feedback - amber */
   --border-color: #D1D5DB;      /* Border color - gray */
-  --highlight-color: #F3F4F6;   /* Subtle highlight - very light gray instead of indigo */
+  --highlight-color: #9aa4fd;   /* Subtle highlight - very light indigo */
   --feedback-black: #000000;    /* Black peg - correct emoji & position */
   --feedback-white: #FFFFFF;    /* White peg - correct emoji, wrong position */
   --slot-bg-color: #E5E7EB;     /* Empty slot background */
-  --feedback-green: #10B981;    /* Green feedback - correct position */
-  --feedback-yellow: #F59E0B;   /* Yellow feedback - correct emoji, wrong position */
-  --feedback-grey: #9CA3AF;     /* Grey feedback - not in code */
 }
 
 * {
@@ -43,13 +40,14 @@ body {
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
-  max-width: 450px;
+  max-width: 500px;
   height: 100%;
   background-color: white;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  padding: 10px;
+  padding: 16px;
   margin: 0 auto;
+  /* Make game container scrollable when needed */
   overflow-y: auto;
   max-height: 100vh;
 }
@@ -59,9 +57,8 @@ body {
   justify-content: center;
   align-items: center;
   position: relative;
-  padding-bottom: 6px;
+  padding-bottom: 10px;
   border-bottom: 1px solid var(--border-color);
-  margin-bottom: 6px;
 }
 
 .guesses-counter {
@@ -74,7 +71,7 @@ body {
 }
 
 h1 {
-  font-size: 1.4rem;
+  font-size: 1.7rem;
   color: var(--primary-color);
   text-align: center;
   margin: 0;
@@ -83,10 +80,10 @@ h1 {
 }
 
 .game-date {
-  font-size: 0.8rem;
+  font-size: 1rem;
   color: var(--secondary-color);
   text-align: center;
-  margin: 4px 0 8px;
+  margin: 8px 0 16px;
   font-weight: 500;
   letter-spacing: 1px;
 }
@@ -97,7 +94,7 @@ h1 {
   flex-direction: column;
   overflow: hidden;
   justify-content: space-between;
-  padding: 0 4px;
+  padding: 0 8px;
 }
 
 /* Board Styles */
@@ -106,41 +103,40 @@ h1 {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 16px;
   flex: 1;
-  padding: 6px 0;
+  padding: 10px 0;
   width: 100%;
   overflow-y: auto;
 }
 
 .guess-row {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 300px;
-  margin-bottom: 4px;
-  padding: 4px;
-  border-radius: 6px;
+  max-width: 350px;
+  margin-bottom: 8px;
+  padding: 8px;
+  border-radius: 8px;
   background-color: var(--highlight-color);
 }
 
 .guess-emojis {
   display: flex;
-  gap: 6px;
+  gap: 8px;
 }
 
 .guess-emoji {
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 24px;
   background-color: white;
   border-radius: 4px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  margin: 0 2px;
 }
 
 .feedback-pegs {
@@ -178,21 +174,21 @@ h1 {
 .current-guess {
   display: flex;
   justify-content: center;
-  gap: 4px;
-  margin-bottom: 8px;
+  gap: 8px;
+  margin-bottom: 12px;
   width: 100%;
-  max-width: 300px;
+  max-width: 350px;
 }
 
 .guess-slot {
-  width: 36px;
-  height: 36px;
+  width: 50px;
+  height: 50px;
   border-radius: 4px;
   background-color: var(--slot-bg-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 28px;
   cursor: pointer;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
@@ -211,15 +207,14 @@ h1 {
   background-color: var(--primary-color);
   color: white;
   border: none;
-  padding: 8px 20px;
+  padding: 10px 24px;
   border-radius: 4px;
   font-family: 'Space Mono', monospace;
   font-weight: bold;
-  font-size: 0.9rem;
+  font-size: 1rem;
   cursor: pointer;
   transition: background-color 0.2s, transform 0.1s;
   text-transform: uppercase;
-  margin-bottom: 6px;
 }
 
 .submit-btn:hover {
@@ -235,136 +230,54 @@ h1 {
   cursor: not-allowed;
 }
 
-/* Emoji Keyboard Styles */
+/* Emoji Keyboard Styles - ENHANCED */
 .emoji-keyboard {
   display: flex;
   justify-content: center;
-  padding: 6px 0;
+  gap: 10px;
+  padding: 10px 0;
   width: 100%;
-}
-
-.emoji-keyboard-grid {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 4px;
-  width: 100%;
-  max-width: 300px;
 }
 
 .emoji-key {
-  width: 40px;
-  height: 40px;
+  /* 20% larger size */
+  width: 55px;
+  height: 55px;
   border: none;
   border-radius: 6px;
   background-color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: 30px;
   cursor: pointer;
-  transition: transform 0.1s, background-color 0.2s;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  /* Enhanced shadow */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+  transition: transform 0.1s, box-shadow 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  /* Prevent text selection */
+  user-select: none;
 }
 
-/* Emoji key states for Wordle-style feedback */
-.emoji-key-green {
-  background-color: var(--feedback-green);
-  color: white;
+.emoji-key:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
 }
 
-.emoji-key-yellow {
-  background-color: var(--feedback-yellow);
-  color: white;
-}
-
-.emoji-key-grey {
-  background-color: var(--feedback-grey);
-  color: white;
-}
-
-/* Guess emoji feedback colors */
-.guess-emoji-green {
-  background-color: var(--feedback-green);
-  color: white;
-}
-
-.guess-emoji-yellow {
-  background-color: var(--feedback-yellow);
-  color: white;
-}
-
-.guess-emoji-grey {
-  background-color: var(--feedback-grey);
-  color: white;
-}
-
-/* Responsive adjustments for mobile */
-@media (max-width: 480px) {
-  .emoji-keyboard-grid {
-    gap: 4px;
-  }
-  
-  .emoji-key {
-    width: 38px;
-    height: 38px;
-    font-size: 18px;
-  }
-  
-  .guess-slot {
-    width: 38px;
-    height: 38px;
-    font-size: 20px;
-  }
-  
-  .guess-emoji {
-    width: 32px;
-    height: 32px;
-    font-size: 18px;
-  }
-  
-  .game-container {
-    padding: 10px;
-  }
-}
-
-/* Even smaller screens */
-@media (max-width: 360px) {
-  .emoji-key {
-    width: 32px;
-    height: 32px;
-    font-size: 16px;
-  }
-  
-  .guess-slot {
-    width: 32px;
-    height: 32px;
-    font-size: 18px;
-  }
-  
-  .guess-emoji {
-    width: 28px;
-    height: 28px;
-    font-size: 16px;
-  }
-  
-  .game-container {
-    padding: 8px;
-  }
-  
-  h1 {
-    font-size: 1.4rem;
-  }
+/* Fix for the lock-in issue for mobile */
+.emoji-key:active {
+  transform: scale(0.95);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
 }
 
 .footer {
   text-align: center;
-  padding: 6px 0;
-  font-size: 0.7rem;
+  font-size: 0.85rem;
   color: var(--text-color);
   opacity: 0.8;
+  padding: 15px 0;
   border-top: 1px solid var(--border-color);
-  margin-top: 6px;
+  margin-top: 5px;
 }
 
 .footer a {
@@ -394,28 +307,27 @@ h1 {
 .modal-container {
   background-color: white;
   border-radius: 10px;
-  width: 90%;
-  max-width: 350px;
-  max-height: 85vh;
-  overflow-y: auto;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  position: relative;
-  animation: slideUp 0.3s ease-out forwards;
-  padding: 15px;
+  width: 94%;
+  max-width: 500px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease-out;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
+  padding: 10px 16px;
   border-bottom: 1px solid var(--border-color);
 }
 
 .modal-header h2 {
   margin: 0;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   color: var(--primary-color);
 }
 
@@ -425,93 +337,46 @@ h1 {
   font-size: 1.5rem;
   cursor: pointer;
   color: var(--text-color);
-  padding: 0;
-  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  margin-top: -5px;
 }
 
 .modal-content {
-  margin-bottom: 15px;
-  font-size: 0.95rem;
+  padding: 12px 16px 8px;
+  overflow-y: auto;
+  flex-grow: 1;
 }
 
 .modal-content p {
-  margin: 0 0 8px;
-  line-height: 1.4;
+  margin: 0 0 6px;
+  line-height: 1.25;
+  font-size: 0.9rem;
 }
 
 .modal-footer {
+  padding: 8px 16px 12px;
+  border-top: 1px solid var(--border-color);
   display: flex;
   justify-content: center;
-  padding-top: 10px;
-  border-top: 1px solid var(--border-color);
 }
 
 .modal-play-button {
   background-color: var(--primary-color);
   color: white;
   border: none;
-  padding: 8px 20px;
+  padding: 10px 50px;
   border-radius: 4px;
   font-family: 'Space Mono', monospace;
   font-weight: bold;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  text-transform: uppercase;
   cursor: pointer;
   transition: background-color 0.2s;
-  text-transform: uppercase;
 }
 
-/* Mobile adjustments for modal */
-@media (max-width: 480px) {
-  .modal-container {
-    padding: 12px;
-    max-width: 320px;
-  }
-  
-  .modal-header {
-    margin-bottom: 10px;
-    padding-bottom: 6px;
-  }
-  
-  .modal-header h2 {
-    font-size: 1.2rem;
-  }
-  
-  .modal-content {
-    font-size: 0.9rem;
-  }
-  
-  .modal-footer {
-    padding-top: 8px;
-  }
-  
-  .modal-play-button {
-    padding: 6px 16px;
-    font-size: 0.9rem;
-  }
-}
-
-/* Even smaller screens */
-@media (max-width: 360px) {
-  .modal-container {
-    padding: 10px;
-    max-width: 300px;
-  }
-  
-  .modal-header {
-    margin-bottom: 8px;
-  }
-  
-  .modal-header h2 {
-    font-size: 1.1rem;
-  }
-  
-  .modal-content {
-    font-size: 0.85rem;
-  }
-  
-  .modal-footer {
-    padding-top: 6px;
-  }
+.modal-play-button:hover {
+  background-color: var(--secondary-color);
 }
 
 /* Rule sections */
@@ -553,19 +418,10 @@ h1 {
   transition: background-color 0.2s;
   margin: 15px auto 0;
   display: block;
-  width: auto;
-  min-width: 180px;
-  text-align: center;
 }
 
 .share-button:hover {
   background-color: var(--secondary-color);
-  color: white;
-  opacity: 1;
-}
-
-.share-button:active {
-  transform: scale(0.98);
 }
 
 /* Result message styling */
@@ -742,139 +598,58 @@ h1 {
     letter-spacing: 2px;
     line-height: 1.2;
     padding: 2px 0;
-    font-size: 1.1rem;
 }
 
 .share-title {
     font-weight: bold;
+    margin-bottom: 2px;
+}
+
+.share-score {
+    font-size: 1.1em;
     margin-bottom: 5px;
-    font-size: 0.9rem;
+}
+
+.share-spacer {
+    height: 8px;
+}
+
+.share-message {
+    margin-top: 5px;
+    font-weight: bold;
+}
+
+.share-button {
+    margin-top: 15px;
+    padding: 12px 20px;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.share-button:hover {
+    background-color: var(--primary-hover-color);
+    transform: translateY(-1px);
+}
+
+.share-button:active {
+    transform: translateY(1px);
 }
 
 /* Responsive adjustments for share preview */
-@media (max-width: 480px) {
+@media (max-width: 350px) {
     .share-preview {
         padding: 10px;
     }
     
     .share-line {
-        font-size: 0.9rem;
+        font-size: 0.9em;
     }
-    
-    .share-title {
-        font-size: 0.8rem;
-    }
-}
-
-@media (max-width: 360px) {
-    .share-line {
-        font-size: 0.8rem;
-    }
-}
-
-/* iPhone-specific optimizations */
-@media screen and (max-width: 480px) {
-  .game-container {
-    padding: 8px 6px;
-    height: calc(100% - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-  }
-  
-  .game-header {
-    padding-bottom: 4px;
-    margin-bottom: 4px;
-  }
-  
-  h1 {
-    font-size: 1.2rem;
-  }
-  
-  .game-date {
-    font-size: 0.7rem;
-    margin: 2px 0 6px;
-  }
-  
-  .board-container {
-    margin-bottom: 6px;
-    padding: 4px 0;
-  }
-  
-  .guess-emoji {
-    width: 28px;
-    height: 28px;
-    font-size: 16px;
-  }
-  
-  .guess-slot {
-    width: 32px;
-    height: 32px;
-    font-size: 18px;
-  }
-  
-  .emoji-key {
-    width: 36px;
-    height: 36px;
-    font-size: 18px;
-  }
-  
-  .submit-btn {
-    padding: 6px 16px;
-    font-size: 0.8rem;
-    margin-bottom: 4px;
-  }
-  
-  .footer {
-    padding: 4px 0;
-    font-size: 0.6rem;
-  }
-}
-
-/* Even smaller screens and iPhone SE */
-@media screen and (max-width: 375px) {
-  .game-container {
-    padding: 6px 4px;
-  }
-  
-  h1 {
-    font-size: 1.1rem;
-  }
-  
-  .guess-emoji {
-    width: 26px;
-    height: 26px;
-    font-size: 14px;
-  }
-  
-  .guess-slot {
-    width: 30px;
-    height: 30px;
-    font-size: 16px;
-  }
-  
-  .emoji-key {
-    width: 32px;
-    height: 32px;
-    font-size: 16px;
-  }
-  
-  .emoji-keyboard-grid {
-    gap: 3px;
-  }
-}
-
-/* Fix for iOS Safari viewport height issues */
-@supports (-webkit-touch-callout: none) {
-  .game-container {
-    height: -webkit-fill-available;
-    max-height: -webkit-fill-available;
-    padding-bottom: env(safe-area-inset-bottom);
-    padding-top: env(safe-area-inset-top);
-  }
-  
-  .board-container {
-    max-height: calc(100vh - 250px);
-  }
-  
-  .footer {
-    margin-bottom: env(safe-area-inset-bottom);
-  }
 }
